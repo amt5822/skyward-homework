@@ -13,4 +13,7 @@ COPY . /app
 
 ENTRYPOINT [ "python3" ]
 
-CMD [ "server.py" ]
+# Expose port
+EXPOSE  5000
+CMD ["server.py"]
+
