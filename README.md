@@ -1,2 +1,2 @@
 run the docker container with the following command:
- - docker run -it <container-name>
+ - docker run -it <container-name>:tag
