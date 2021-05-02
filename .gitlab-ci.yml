@@ -4,40 +4,27 @@ services:
   - docker:dind
 
 stages:
-  - build
   - test
-  - release
-
-
-
-
-variables:
-  STAGING_REGISTRY: "annietrusty/homework"
-  CONTAINER_TEST_IMAGE: ${STAGING_REGISTRY}/${CI_PROJECT_NAME}:${CI_BUILD_REF_NAME}_${CI_BUILD_REF}_test
-  CONTAINER_RELEASE_IMAGE: ${STAGING_REGISTRY}/${CI_PROJECT_NAME}:${CI_BUILD_REF_NAME}_${CI_BUILD_REF}
-
-before_script:
-  - docker login -u gitlab-ci -p $CI_BUILD_TOKEN $STAGING_REGISTRY
-
-
-build:
-  stage: build
-  script:
-    - cd src
-    - docker build --pull -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
+  - deploy
 
 test:
   stage: test
-  script:
-    - docker run -d --env-file=.postgres-env postgres:9.5
-    - docker run --env-file=.environment --link=postgres:db $CONTAINER_TEST_IMAGE nosetests --with-coverage --cover-erase --cover-package=${CI_PROJECT_NAME} --cover-html
+  only:
+    - master
 
-release:
-  stage: release
   script:
-    - cd src
-    - docker pull $CONTAINER_TEST_IMAGE
-    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
-    - docker push $CONTAINER_RELEASE_IMAGE
+    - echo run tests in this section
 
+step-deploy-prod:
+  stage: deploy
+  only:
+    - master
+  script:
+    - sudo apt-get install -y python3-pip
+    - sudo pip3 install --upgrade setuptools
+    - sudo pip3 install docker-compose
+    - sudo docker image prune -f
+    - docker-compose build --no-cache
+    - docker-compose up -d
+  environment: master
+  when: manual
