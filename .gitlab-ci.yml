@@ -1,8 +1,26 @@
-buildjob:
-    stage: build
-    tags:
-    - docker, vX.Y.Z
-    script:
-    - docker build -t annietrusty/homework:latest .
-    - docker image push annietrusty/homework:latest
+stages:
+  - test
+  - build
 
+test:
+  stage: test
+  image: annietrusty/homework:v0.0.0
+  before_script:
+    - pip3 install -r requirements.txt
+  script:
+    - python test_server.py
+  only:
+    - master
+
+build:
+  stage: build
+  image: annietrusty/homework:v0.0.0
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - master
