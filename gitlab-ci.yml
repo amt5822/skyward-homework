@@ -1,0 +1,8 @@
+buildjob:
+    stage: build
+    tags:
+    - docker, vX.Y.Z
+    script:
+    - docker build -t annietrusty/homework:latest .
+    - docker image push annietrusty/homework:latest
+
