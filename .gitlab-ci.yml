@@ -1,3 +1,4 @@
+# Test, build and deploy
 stages:
   - test
   - build
