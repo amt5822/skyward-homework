@@ -25,12 +25,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       -
-        name: Build and push to Docker registry
-        uses: docker-build-push@v3
-        with:
-          context: .
-          file: ./Dockerfile
-          push: True
-          tags: annietrusty/homework:latest
-
-
+        name: Build Docker image
+        run: docker build . --file Dockerfile --tag annietrusty/homework:latest
+      - 
+        name: Push Docker image to Docker Hub
+        run: docker push annietrusty/homework:latest
+     
