@@ -25,9 +25,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       -
-        name: Docker build
-        run: docker build . --file Dockerfile --tag serverapp:$(date +%s)
-      -
-        name: Push to Docker registry
-        run: annietrusty/homework/docker-build-push@v3
+        name: Build and push to Docker registry
+        uses: docker-build-push@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: True
+          tags: annietrusty/homework:latest
+
 
